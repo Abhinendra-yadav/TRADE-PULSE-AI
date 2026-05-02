@@ -26,7 +26,7 @@ function App() {
     console.log("Fetching data for:", stock); // Debugging line
 
     try {
-      const res = await axios.get(`http://127.0.0.1:8000/stock/${stock}`);
+      const res = await axios.get(`https://trade-pulse-api.onrender.com/stock/${stock}`);
       console.log("Response Received:", res.data); // Debugging line
       
       if (res.data.error) {
