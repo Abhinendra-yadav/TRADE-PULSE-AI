@@ -23,11 +23,9 @@ function App() {
     setLoading(true); 
     setSuggestions([]);
     
-    console.log("Fetching data for:", stock); // Debugging line
-
     try {
+      // Production URL
       const res = await axios.get(`https://trade-pulse-api.onrender.com/stock/${stock}`);
-      console.log("Response Received:", res.data); // Debugging line
       
       if (res.data.error) {
         alert(res.data.error);
@@ -37,7 +35,7 @@ function App() {
       }
     } catch (err) { 
       console.error("Axios Error:", err);
-      alert("Backend se connect nahi ho pa raha! Check if server is running on port 8000."); 
+      alert("Backend se response nahi mil raha! Render server ko jaghne mein 1 minute lag sakta hai. Please wait and try again."); 
     }
     setLoading(false);
   };
@@ -54,7 +52,6 @@ function App() {
       <div style={{ maxWidth: '900px', margin: '0 auto' }}>
         <h1 style={{ color: '#00d09c', display: 'flex', alignItems: 'center', gap: '10px' }}><TrendingUp /> TradePulse AI</h1>
         
-        {/* Search Bar */}
         <div style={{ position: 'relative', margin: '30px 0' }}>
           <div style={{ display: 'flex', gap: '10px', background: '#111', padding: '10px', borderRadius: '12px', border: '1px solid #2d3436' }}>
             <Search style={{ marginTop: '10px', marginLeft: '10px' }} color="#5d6d7e" />
@@ -76,10 +73,8 @@ function App() {
           )}
         </div>
 
-        {/* Display Data only if it exists */}
         {data ? (
           <div style={{ display: 'grid', gap: '30px' }}>
-            {/* Header & Chart */}
             <div style={{ background: '#0f1216', padding: '25px', borderRadius: '20px', border: '1px solid #222' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
                 <div>
@@ -106,7 +101,6 @@ function App() {
               </div>
             </div>
 
-            {/* Stats */}
             <div>
               <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '15px' }}><BarChart3 size={20} color="#00d09c" /> Key Statistics</h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '15px' }}>
@@ -117,7 +111,6 @@ function App() {
               </div>
             </div>
 
-            {/* News */}
             {data.news && data.news.length > 0 && (
               <div>
                 <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '15px' }}><Newspaper size={20} color="#00d09c" /> Latest Market News</h3>
