@@ -7,26 +7,31 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# Frontend (React) connection settings
-# Jab aapka Vercel link mil jaye, toh "*" ki jagah wo link dalna behtar hai
+# 1. CORS Middleware (Essential for Vercel to talk to Render)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# 2. Root Route (Taaki "Detail Not Found" na dikhaye)
+@app.get("/")
+def read_root():
+    return {"message": "TradePulse AI Backend is Running!"}
+
 @app.get("/stock/{symbol}")
 def get_stock_advice(symbol: str):
     try:
-        # 1. Symbol Cleaning & NSE Priority
+        # Symbol Cleaning & NSE Priority
         original_symbol = symbol.upper().strip()
         ticker_symbol = original_symbol if "." in original_symbol else f"{original_symbol}.NS"
         
         ticker = yf.Ticker(ticker_symbol)
         df = ticker.history(period="6mo")
 
-        # 2. Global search agar NSE par data na mile
+        # Global search agar NSE par data na mile
         if df.empty:
             ticker_symbol = original_symbol
             ticker = yf.Ticker(ticker_symbol)
@@ -35,7 +40,7 @@ def get_stock_advice(symbol: str):
         if df.empty:
             return {"error": "Stock data not found. Please check the ticker symbol."}
 
-        # 3. Fundamental Stats Fetching
+        # Fundamental Stats Fetching
         info = ticker.info
         stats = {
             "mCap": info.get("marketCap", "N/A"),
@@ -44,7 +49,7 @@ def get_stock_advice(symbol: str):
             "low52": info.get("fiftyTwoWeekLow", "N/A")
         }
 
-        # 4. News Fetching
+        # News Fetching
         news_list = []
         try:
             raw_news = ticker.news if hasattr(ticker, 'news') else []
@@ -59,7 +64,7 @@ def get_stock_advice(symbol: str):
         except:
             news_list = []
 
-        # 5. RSI Calculation
+        # RSI Calculation (Technical Analysis)
         delta = df['Close'].diff()
         gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
         loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
@@ -70,14 +75,14 @@ def get_stock_advice(symbol: str):
         current_rsi = round(df['RSI'].iloc[-1], 2)
         current_price = round(df['Close'].iloc[-1], 2)
 
-        # 6. Advice Logic
+        # Advice Logic
         advice, color = ("HOLD", "#9ca3af")
         if current_rsi < 35: 
             advice, color = ("STRONG BUY", "#00d09c")
         elif current_rsi > 65: 
             advice, color = ("STRONG SELL", "#ff4d4d")
 
-        # 7. Chart Data formatting
+        # Chart Data formatting
         chart_data = [
             {"time": str(date.date()), "price": round(price, 2)} 
             for date, price in df['Close'].items()
@@ -97,8 +102,7 @@ def get_stock_advice(symbol: str):
     except Exception as e:
         return {"error": f"Internal Server Error: {str(e)}"}
 
-# DONT CHANGE THIS PART - Ye deployment ke liye bahut zaruri hai
+# 3. Deployment Port Logic
 if __name__ == "__main__":
-    # Render automatically sets a PORT environment variable
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
