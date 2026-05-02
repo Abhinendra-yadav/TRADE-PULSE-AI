@@ -1,15 +1,17 @@
-from fastapi import FastAPI
+import os
 import yfinance as yf
 import pandas as pd
-from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# Frontend (React) se connection allow karne ke liye
+# Frontend (React) connection settings
+# Jab aapka Vercel link mil jaye, toh "*" ki jagah wo link dalna behtar hai
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"], 
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -42,7 +44,7 @@ def get_stock_advice(symbol: str):
             "low52": info.get("fiftyTwoWeekLow", "N/A")
         }
 
-        # 4. Safe News Fetching (Handling missing 'title' or 'headline')
+        # 4. News Fetching
         news_list = []
         try:
             raw_news = ticker.news if hasattr(ticker, 'news') else []
@@ -57,7 +59,7 @@ def get_stock_advice(symbol: str):
         except:
             news_list = []
 
-        # 5. RSI Calculation (Technical Analysis)
+        # 5. RSI Calculation
         delta = df['Close'].diff()
         gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
         loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
@@ -68,14 +70,14 @@ def get_stock_advice(symbol: str):
         current_rsi = round(df['RSI'].iloc[-1], 2)
         current_price = round(df['Close'].iloc[-1], 2)
 
-        # 6. Advice Logic based on RSI
+        # 6. Advice Logic
         advice, color = ("HOLD", "#9ca3af")
         if current_rsi < 35: 
             advice, color = ("STRONG BUY", "#00d09c")
         elif current_rsi > 65: 
             advice, color = ("STRONG SELL", "#ff4d4d")
 
-        # 7. Chart Data formatting for Recharts
+        # 7. Chart Data formatting
         chart_data = [
             {"time": str(date.date()), "price": round(price, 2)} 
             for date, price in df['Close'].items()
@@ -95,5 +97,8 @@ def get_stock_advice(symbol: str):
     except Exception as e:
         return {"error": f"Internal Server Error: {str(e)}"}
 
+# DONT CHANGE THIS PART - Ye deployment ke liye bahut zaruri hai
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    # Render automatically sets a PORT environment variable
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
