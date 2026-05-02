@@ -104,5 +104,6 @@ def get_stock_advice(symbol: str):
 
 # 3. Deployment Port Logic
 if __name__ == "__main__":
+    # Render automatically sets a PORT environment variable
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
