@@ -25,7 +25,7 @@ function App() {
     
     try {
       // Production URL
-      const res = await axios.get(`https://trade-pulse-api.onrender.com/stock/${stock}`);
+      const res = await axios.get(`https://trade-pulse-ai.onrender.com/stock/${stock}`);
       
       if (res.data.error) {
         alert(res.data.error);
