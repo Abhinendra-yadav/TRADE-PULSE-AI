@@ -14,7 +14,7 @@ function App() {
 
   // Local FastAPI server address
 // Inside your App.js, change ONLY this line:
-const BACKEND_URL = "http://127.0.0.1:8000";
+const BACKEND_URL = "https://trade-pulse-ai.onrender.com";
 
   useEffect(() => {
     if (ticker.length > 0) {
