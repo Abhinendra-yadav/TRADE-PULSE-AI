@@ -1,19 +1,34 @@
-# 💹 TradePulse AI - Full-Stack Financial Dashboard
+# TradePulse AI - ML Stock Intelligence Engine v2 🚀
 
-**TradePulse AI** is a professional-grade stock analytics platform developed as part of my B.Tech Computer Science curriculum. It empowers retail investors with real-time technical and fundamental insights.
+An advanced Full-Stack Financial Analysis tool that combines **Machine Learning (XGBoost)** and **NLP (Sentiment Analysis)** to provide real-time stock recommendations.
 
-## 🚀 Key Features
-* **Real-time Market Data**: Integrated with **Yahoo Finance API** for live NSE/BSE and global stock tracking.
-* **Algorithmic Advisory**: Automated **RSI (Relative Strength Index)** calculation to provide 'Strong Buy', 'Hold', or 'Strong Sell' signals.
-* **Fundamental Insights**: Displays Market Cap, P/E Ratio, and 52-week High/Low.
-* **Dynamic Visualization**: Interactive area charts built with **Recharts**.
-* **Smart Search**: Client-side filtering and auto-suggestions for popular stock tickers.
+## ✨ Features
+- **AI Intelligence Engine:** Uses XGBoost Classifier to predict Bullish/Bearish trends.
+- **Sentiment Analysis:** Analyzes market news via VADER Sentiment to gauge investor mood.
+- **Dynamic Charting:** Interactive price movement visualization using Recharts.
+- **Multi-Market Support:** Seamlessly handles NSE/BSE (Indian) and Global stock tickers.
+- **Risk Assessment:** Real-time volatility calculation and risk-level grading.
 
 ## 🛠️ Tech Stack
-* **Frontend**: React.js, Recharts, Lucide-React, Axios.
-* **Backend**: Python, FastAPI, Pandas, yFinance.
+- **Frontend:** React.js, Lucide Icons, Recharts, Axios.
+- **Backend:** FastAPI (Python), Uvicorn.
+- **ML/Data:** XGBoost, Scikit-learn, YFinance, Pandas, NumPy.
+- **NLP:** VADER Sentiment Analysis.
 
-## 📊 Technical Logic
-The application uses the **RSI momentum oscillator** to identify trend reversals:
-* **RSI < 35**: Oversold — **Strong Buy Signal**.
-* **RSI > 65**: Overbought — **Strong Sell Signal**.
+## 🚀 Quick Start
+
+### Backend
+1. `cd Backend`
+2. `pip install -r requirements.txt`
+3. `uvicorn main:app --reload`
+
+### Frontend
+1. `cd frontend`
+2. `npm install`
+3. `npm start`
+
+## 📊 How it Works
+The system performs a "Double Confirmation" strategy:
+1. It trains an **XGBoost model** on historical data (MAs, Close Prices).
+2. It fetches the latest news and runs a **VADER sentiment analysis**.
+3. It generates a **BUY/SELL/HOLD** signal only if both Technical and Sentimental data align.
